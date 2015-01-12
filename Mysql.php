@@ -430,9 +430,9 @@ class Mysql {
                 $log .= "Referer: " . $_SERVER["HTTP_REFERER"] . "\r\n\r\n\r\n";
 
                 if($this->log_error_sql) {
-                    require_once 'RotateLogger.php';
+                    require_once 'Rotatelogger.php';
                     if(empty($this->rlog)) {
-                        $this->rlog = new RotateLogger($this->log_error_sql_filename, 'ERROR', $this->log_error_sql_live_days);
+                        $this->rlog = new Rotatelogger($this->log_error_sql_filename, 'ERROR', $this->log_error_sql_live_days);
                     }
                     $this->rlog->error($log);
                 } 

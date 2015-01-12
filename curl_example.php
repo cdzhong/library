@@ -4,7 +4,7 @@ require_once 'Curl.php';
 ####这是一个简单的http get示例####
 $curl = new Curl();
 
-$response = $curl->get('http://www.baidu.coms/s?', array('wd'=>'ddddd')); //返回正确的话，$response是CurlResponse的一个对象
+$response = $curl->get('http://www.baidu.com/s?', array('wd'=>'ddddd')); //返回正确的话，$response是CurlResponse的一个对象
 if($response) {
 	//var_dump($response); $response和$response->body一样是字符串，因为$response对象有魔术方法__toString
 	//echo $response->body;
