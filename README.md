@@ -2,6 +2,11 @@
 ##包括3个类以及相应的example##
 
 
+1. Curl.php	 curl\_example.php curl\_compare.php
+2. Mysql.php   mysql_example.php
+3. Rotatelogger.php log_example.php
+
+
 ##如何跟CI一起工作##
 
 #####全局自动加载#####
