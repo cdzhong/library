@@ -271,7 +271,7 @@ class Mysql {
         * @return array |false
         */
 
-        function query_all($query_string, $result_type = MYSQL_ASSOC) {
+        function query_all($query_string, $key=null, $result_type = MYSQL_ASSOC) {
 
 				if (!$this->check_sql($query_string)) {
 					return false ;
@@ -283,7 +283,11 @@ class Mysql {
 
                     $records = array();
                     while($record = $this->fetch_array($this->result, $result_type)){
-                         $records[] = $record;
+						if($key == null) {
+							$records[] = $record;
+						} else {
+							$records[$record[$key]] = $record;
+						}
                     }
 
 
@@ -430,9 +434,9 @@ class Mysql {
                 $log .= "Referer: " . $_SERVER["HTTP_REFERER"] . "\r\n\r\n\r\n";
 
                 if($this->log_error_sql) {
-                    require_once 'Rotatelogger.php';
+                    require_once 'RotateLogger.php';
                     if(empty($this->rlog)) {
-                        $this->rlog = new Rotatelogger($this->log_error_sql_filename, 'ERROR', $this->log_error_sql_live_days);
+                        $this->rlog = new RotateLogger($this->log_error_sql_filename, 'ERROR', $this->log_error_sql_live_days);
                     }
                     $this->rlog->error($log);
                 } 
