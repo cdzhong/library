@@ -9,7 +9,7 @@
 */
 
 
-define('YYKF_APP_LOG_FILE', '/data/wwwroot/mobaap/log/mobaaplog.log');   //必须指定log文件的路径，单个log文件的大小为10MB,写满了会被备份
+define('YYKF_APP_LOG_FILE', '/data/wwwroot/mobapp/log/mobapplog.log');   //必须指定log文件的路径，单个log文件的大小为10MB,写满了会被备份
 define('YYKF_APP_LOG_LEVEL', 'WARNING');  //设定记录WARNING以上级别的log 可以不传这个参数，默认是ERROR
 define('YYKF_APP_LOG_LIVE_DAYS', 10);  //这表示删除10天前的log, 可以不传这个参数，默认是不删除log,如果传了这个参数，必须大于等于5
 

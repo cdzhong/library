@@ -88,6 +88,8 @@ class Rotatelogger {
      */
     private $hStat;
 
+    private $lock_fp;
+
     /**
      * Creates instance of RLogger.
      *
@@ -162,7 +164,16 @@ class Rotatelogger {
         //   return FALSE;
         //}
         }
-        return TRUE;
+	if(!file_exists("/tmp/rotate_log_lock.txt")){
+		fopen("/tmp/rotate_log_lock.txt", 'w');
+	}
+	$this->lock_fp = fopen("/tmp/rotate_log_lock.txt", "r+");
+
+	if (flock($this->lock_fp, LOCK_EX)) {  // 进行排它型锁定
+        	return TRUE;
+	}else {
+		return false;
+	}
     }
 
     /**
@@ -175,6 +186,8 @@ class Rotatelogger {
         clearstatcache(); // Drop internal php cache with file's stat
         $this->rLogFile = $this->openFile($this->sFilePath, 'w');
         chmod($this->sFilePath, $this->hStat["mode"]); // Change CTime
+	flock($this->lock_fp, LOCK_UN);    // 释放锁定
+	fclose($this->lock_fp);
     }
 
     /**
