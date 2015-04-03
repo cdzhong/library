@@ -53,12 +53,6 @@ class Rotatelogger {
 
 
     /**
-     * File resource
-     * @var resource
-     */
-    private $rLogFile;
-
-    /**
      * Log level
      * @var integer
      */
@@ -104,10 +98,11 @@ class Rotatelogger {
         if(empty($log_file)) {
             exit('no define log_file...');
         } else {
-            $this->rLogFile = $this->openFile($log_file);
+            $this->sFilePath = realpath($log_file);
+	   $this->openFile($this->sFilePath);
         }
 
-        if (!is_null($this->rLogFile) && $this->needRotate()) {
+        if ($this->needRotate()) {
             $this->rotate();
         }
 
@@ -142,7 +137,6 @@ class Rotatelogger {
     private function openFile($sFilePath, $mode='a') {
         try {
             $handler = fopen($sFilePath, $mode);
-            $this->sFilePath = realpath($sFilePath);
         } catch (RuntimeException $e) {
             return NULL;
         }
@@ -150,7 +144,6 @@ class Rotatelogger {
             return NULL;
         }
         $this->hStat = fstat($handler);
-        return $handler;
     }
 
     /**
@@ -158,22 +151,22 @@ class Rotatelogger {
      * @return bool
      */
     private function needRotate() {
-        if (is_null($this->rLogFile) || !is_file($this->sFilePath) || filesize($this->sFilePath)<self::MAX_LOG_FILE_SIZE*1024*1024 ) {
+        if (!is_file($this->sFilePath) || filesize($this->sFilePath)<self::MAX_LOG_FILE_SIZE*1024*1024 ) {
             return FALSE;
         //} elseif (intval(date('Ym')) < intval(date('Ym', filectime($this->sFilePath)))) {
         //   return FALSE;
         //}
         }
-	if(!file_exists("/tmp/rotate_log_lock.txt")){
-		fopen("/tmp/rotate_log_lock.txt", 'w');
-	}
-	$this->lock_fp = fopen("/tmp/rotate_log_lock.txt", "r+");
+    	if(!file_exists("/tmp/rotate_log_lock.txt")){
+    		fopen("/tmp/rotate_log_lock.txt", 'w');
+    	}
+    	$this->lock_fp = fopen("/tmp/rotate_log_lock.txt", "r+");
 
-	if (flock($this->lock_fp, LOCK_EX)) {  // 进行排它型锁定
-        	return TRUE;
-	}else {
-		return false;
-	}
+    	if (flock($this->lock_fp, LOCK_EX)) {  // 进行排它型锁定
+            	return TRUE;
+    	}else {
+    		return false;
+    	}
     }
 
     /**
@@ -181,13 +174,12 @@ class Rotatelogger {
      * Copy a $rLogFile to the new file and reopen it with mode 'w'
      */
     private function rotate() {
-        fclose($this->rLogFile);
         copy($this->sFilePath, $this->sFilePath . "_" . date('Y-m-d_H_i_s'));
         clearstatcache(); // Drop internal php cache with file's stat
-        $this->rLogFile = $this->openFile($this->sFilePath, 'w');
+        file_put_contents($this->sFilePath, "");  //清空文件内容
         chmod($this->sFilePath, $this->hStat["mode"]); // Change CTime
-	flock($this->lock_fp, LOCK_UN);    // 释放锁定
-	fclose($this->lock_fp);
+	    flock($this->lock_fp, LOCK_UN);    // 释放锁定
+	    fclose($this->lock_fp);
     }
 
     /**
@@ -232,9 +224,6 @@ class Rotatelogger {
      * @param string $oMessage
      */
     private  function log($logLevel, $oMessage) {
-        if (is_null($this->rLogFile)) {
-            return;
-        }
         $sLogMsg = $oMessage;
         if (is_array($oMessage)) {
             $sLogMsg = print_r($oMessage, true);
@@ -243,7 +232,7 @@ class Rotatelogger {
         }
         if ($logLevel >= $this->iLogLevel) {
             $sLogLine = date($this->sDateFormat) . ' ' . $this->logLevelAsString($logLevel) . ' ' . $sLogMsg . PHP_EOL;
-            fwrite($this->rLogFile, $sLogLine);
+            error_log($sLogLine, 3, $this->sFilePath);
         }
     }
 
