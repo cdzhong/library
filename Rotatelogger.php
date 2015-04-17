@@ -98,8 +98,8 @@ class Rotatelogger {
         if(empty($log_file)) {
             exit('no define log_file...');
         } else {
+            $this->openFile($log_file);
             $this->sFilePath = realpath($log_file);
-	   $this->openFile($this->sFilePath);
         }
 
         if ($this->needRotate()) {
@@ -144,6 +144,8 @@ class Rotatelogger {
             return NULL;
         }
         $this->hStat = fstat($handler);
+	fclose($handler);
+	clearstatcache();
     }
 
     /**
