@@ -141,6 +141,15 @@ class Curl {
         return $this->request('POST', $url, $vars);
     }
     
+   function postJson($url, $vars = array()) {
+        $this->options['CURLOPT_POSTFIELDS'] = json_encode($vars);
+        $this->options['CURLOPT_HTTPHEADER'] = array(
+                            'Content-Type: application/json; charset=utf-8',
+                            'Content-Length: ' . strlen(json_encode($vars)));
+        return $this->request('POST', $url, $vars);
+    }
+    
+    
     /**
      * Makes an HTTP PUT request to the specified $url with an optional array or string of $vars
      *
