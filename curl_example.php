@@ -82,7 +82,7 @@ $arr = ['a'=>8, 'b'=>3];
 $curl->options['CURLOPT_POSTFIELDS'] = json_encode($arr);
 $curl->options['CURLOPT_HTTPHEADER'] = array(
                     'Content-Type: application/json; charset=utf-8',
-                    'Content-Length: ' . strlen(json_encode($arr))+10);
+                    'Content-Length: ' . strlen(json_encode($arr)));
 
 $contents =$curl->post('http://localhost/test2.php');
 
