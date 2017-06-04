@@ -78,4 +78,12 @@ var_dump($contents);  //$contents数组是与$urls数组一一对应的
 //$curl->options['CURLOPT_SSL_VERIFYPEER'] = false;
 
 
+$arr = ['a'=>8, 'b'=>3];
+$curl->options['CURLOPT_POSTFIELDS'] = json_encode($arr);
+$curl->options['CURLOPT_HTTPHEADER'] = array(
+                    'Content-Type: application/json; charset=utf-8',
+                    'Content-Length: ' . strlen(json_encode($arr))+10);
+
+$contents =$curl->post('http://localhost/test2.php');
+
 ?>
